@@ -1,7 +1,10 @@
 import {
   FETCH_USERS_START,
   FETCH_USERS_FAILURE,
-  FETCH_USERS_SUCCESS
+  FETCH_USERS_SUCCESS,
+  FETCH_BUSES_START,
+  FETCH_BUSES_FAILURE,
+  FETCH_BUSES_SUCCESS
 } from "../store/constants/action-types";
 import {
   mergeMap,
@@ -27,7 +30,7 @@ const api = (url, options) => {
     });
 };
 
-const fetchUsersEpic = action$ => {
+export const fetchUsersEpic = action$ => {
   return action$.pipe(
     ofType(FETCH_USERS_START),
     mergeMap(() => {
@@ -61,4 +64,29 @@ const fetchUsersEpic = action$ => {
     }));
 };
 
-export default fetchUsersEpic;
+export const fetchBusesEpic = action$ => {
+  return action$.pipe(
+    ofType(FETCH_BUSES_START),
+    mergeMap(() => {
+      return from(api('https://api.tfl.gov.uk/line/295/arrivals'))
+        .pipe(
+          map(payload => {
+            const optimisedPayload = payload.map(bus => (({
+              id, vehicleId, stationName, direction, timestamp, timeToStation, currentLocation, expectedArrival
+              }) => ({
+              id, vehicleId, stationName, direction, timestamp, timeToStation, currentLocation, expectedArrival
+            }))(bus));
+            return ({
+              type: FETCH_BUSES_SUCCESS,
+              payload: optimisedPayload
+            });
+          }),
+          catchError(e => {
+            return of({
+              type: FETCH_BUSES_FAILURE,
+              payload: e
+            });
+          })
+        );
+    }));
+};

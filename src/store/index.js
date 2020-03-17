@@ -1,4 +1,4 @@
-import fetchUsersEpic from "../epics/api-observables";
+import {fetchUsersEpic, fetchBusesEpic} from "../epics/api-observables";
 import {
   createStore,
   applyMiddleware,
@@ -6,7 +6,8 @@ import {
 } from "redux";
 import rootReducer from "./reducers/index";
 import {
-  createEpicMiddleware
+  createEpicMiddleware,
+  combineEpics
 } from "redux-observable";
 
 const observableMiddleware = createEpicMiddleware();
@@ -18,5 +19,10 @@ const store = createStore(
   storeEnhancers(applyMiddleware(observableMiddleware))
 );
 
-observableMiddleware.run(fetchUsersEpic);
+export const rootEpic = combineEpics(
+  fetchBusesEpic,
+  fetchUsersEpic
+);
+
+observableMiddleware.run(rootEpic);
 export default store;

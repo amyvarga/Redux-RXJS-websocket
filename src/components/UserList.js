@@ -1,10 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
-import UL from "./styles/list";
+import UL from "./styles/userList";
 
 const ConnectedList = ({ users, loadingUsers, errorMessage }) => {
   return (
-
     <UL>
       {users && users.map(el => (
         <li key={el.id}>
