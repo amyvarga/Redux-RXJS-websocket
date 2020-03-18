@@ -19,7 +19,7 @@ const App = ({ getUsers, getBuses }) => {
       <button onClick={getUsers}>See more users</button>
     </section>
     <section>
-      <h2>Tfl bus status</h2>
+      <h2>Tfl bus status - bus 295</h2>
       <BusList />
     </section>
     </div>

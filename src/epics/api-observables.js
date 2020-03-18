@@ -72,9 +72,9 @@ export const fetchBusesEpic = action$ => {
         .pipe(
           map(payload => {
             const optimisedPayload = payload.map(bus => (({
-              id, vehicleId, stationName, direction, timestamp, timeToStation, currentLocation, expectedArrival
+              expectedArrival, id, vehicleId, stationName, direction, timestamp, timeToStation, towards
               }) => ({
-              id, vehicleId, stationName, direction, timestamp, timeToStation, currentLocation, expectedArrival
+                expectedArrival, id, vehicleId, stationName, direction, timestamp, timeToStation, towards
             }))(bus));
             return ({
               type: FETCH_BUSES_SUCCESS,
