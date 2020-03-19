@@ -18,6 +18,44 @@ const initialState = {
   }
 };
 
+const compareBusTimes = (a, b) => {
+  const timeA = new Date(a.expectedArrival);
+  const timeB = new Date(b.expectedArrival);
+  if (timeA < timeB) {
+    return -1;
+  }
+  if (timeA > timeB) {
+    return 1;
+  }
+  return 0;
+};
+const sortBusesByDate = ((array) => {
+  return array.sort(compareBusTimes);
+});
+const formatBusTimes = ((array) => {
+  const formatted = array.map(item => {
+    const arrivalTime = item.expectedArrival.substring(11, 16);
+ 
+    return {...item, expectedArrival: arrivalTime};
+  });
+  return formatted;
+});
+const formatBusMinutes = ((array) => {
+  const formatted = array.map(item => {
+    const arrivalInMins = Math.round(item.timeToStation / 60);
+    return {...item, timeToStation: arrivalInMins};
+  });
+  return formatted;
+});
+const filterAndGroupBuses = ((direction, array) => {
+  const filterByDirection = array.filter(item => item.direction === direction);
+  const uniqueVehicleIds = [...new Set(filterByDirection.map(item => item.vehicleId))];
+  const groupedByVehicleId = uniqueVehicleIds.reduce((groupedVehicles, vehicleId) => {
+    return {...groupedVehicles, [vehicleId]: filterByDirection.filter(item => item.vehicleId === vehicleId)};
+  }, {});
+  return groupedByVehicleId;
+}); 
+
 const handlers = {
   [FETCH_USERS_START]: (state) => {
     return Object.assign({}, state, {
@@ -44,34 +82,15 @@ const handlers = {
     });
   },
   [FETCH_BUSES_SUCCESS]: (state, action) => {
-    const compareBusTimes = (a, b) => {
-      const timeA = new Date(a.expectedArrival);
-      const timeB = new Date(b.expectedArrival);
-      if (timeA < timeB) {
-        return -1;
-      }
-      if (timeA > timeB) {
-        return 1;
-      }
-      return 0;
-    };
-    const sortByDate = action.payload.sort(compareBusTimes);
-    const formatTime = sortByDate.map(bus => {
-      const arrivalTime = bus.expectedArrival.substring(11, 16);
-      const arrivalInMins = Math.round(bus.timeToStation / 60);
-      return {...bus, expectedArrival: arrivalTime, timeToStation: arrivalInMins};
-    });
-    const inbound = formatTime.filter(bus => bus.direction === "inbound");
-    const vehicleIds = new Set([...inbound.map(bus => bus.vehicleId)]);
-    const inboundBuses = [...vehicleIds].reduce((groupedVehicles, vehicleId) => {
-      return {...groupedVehicles, [vehicleId]: inbound.filter(bus => bus.vehicleId === vehicleId)};
-    }, {});
-    
-    const outboundBuses = formatTime.filter(bus => bus.direction === "outbound");
+    const busesSortedByDate = sortBusesByDate(action.payload);
+    const formattedBusesTime= formatBusTimes(busesSortedByDate);
+    const formattedBusesMinutes = formatBusMinutes(formattedBusesTime);
+    const inboundBuses = filterAndGroupBuses("inbound",formattedBusesMinutes);
+    const outboundBuses = filterAndGroupBuses("outbound", formattedBusesMinutes);
     return  {
      ...state, 
      buses: {
-   
+      outbound: outboundBuses,
       inbound: inboundBuses
      },
      loadingBuses: false

@@ -13,7 +13,7 @@ const App = ({ getUsers, getBuses }) => {
 
   return (
     <div>
-    <section className="App">
+    <section>
       <h1>Github users</h1>
       <UserList />
       <button onClick={getUsers}>See more users</button>
