@@ -4,7 +4,8 @@ export const SECTION = styled.div `
   h3 {
     color: #4C9900;
     margin-bottom: 0;
-    flex:0 0 100%
+    flex:0 0 100%;
+    margin-left: 0.5em;
   }
   .tableGroup {
     display: flex;
