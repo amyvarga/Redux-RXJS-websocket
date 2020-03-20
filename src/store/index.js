@@ -1,4 +1,5 @@
-import {fetchUsersEpic, fetchBusesEpic} from "../epics/api-observables";
+import {fetchUsersEpic} from "../epics/api-observables";
+import {fetchBusesEpic} from "../epics/api-ws-observables";
 import {
   createStore,
   applyMiddleware,
