@@ -4,5 +4,5 @@
 
 * ### Redux Thunk, Redux Saga and RXJS Observables for async API's
 
-* ### Implements websockets for live data
+* ### Websockets for live data
 
