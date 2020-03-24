@@ -1,8 +1,8 @@
 ## Prototype implementation of:
 
-### Redux
+* ### Redux
 
-### Redux Thunk, Redux Saga and RXJS Observables for async API's
+* ### Redux Thunk, Redux Saga and RXJS Observables for async API's
 
-### Implements websockets for live data
+* ### Implements websockets for live data
 
