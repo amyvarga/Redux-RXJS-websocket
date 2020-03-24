@@ -1,8 +1,8 @@
-### Example code 
+## Prototype implementation of:
 
-## Implements Redux
+### Redux
 
-## Experiments with Thunk, Saga and Epics for async API's
+### Redux Thunk, Redux Saga and RXJS Observables for async API's
 
-## Implements websockets for live data
+### Implements websockets for live data
 
