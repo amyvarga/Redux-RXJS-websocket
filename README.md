@@ -1,3 +1,8 @@
-### Redux for async actions
+### Example code 
 
-Implements Redux and experiments with Redux-thunk, Redux-saga and Redux observables for async api actions
+## Implements Redux
+
+## Experiments with Thunk, Saga and Epics for async API's
+
+## Implements websockets for live data
+
