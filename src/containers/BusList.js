@@ -43,7 +43,7 @@ const ConnectedList = ({ buses, loadingBuses, errorMessage}) => {
   return (
     <>
     <SECTION>
-     {buses && inbound && <h3>Towards Labroke Grove</h3>}
+     {buses && inbound && <h3>295 towards Labroke Grove</h3>}
      <div className="tableGroup">
       {buses && Object.keys(inbound).map(vehicleId => 
         <div key={vehicleId} className="tableContainer">

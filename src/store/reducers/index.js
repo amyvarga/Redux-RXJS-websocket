@@ -1,3 +1,4 @@
+import {pipe} from "ramda";
 import {
   FETCH_USERS_START,
   FETCH_USERS_SUCCESS,
@@ -18,7 +19,7 @@ const initialState = {
   }
 };
 
-const compareBusTimes = (a, b) => {
+export const compareBusTimes = (a, b) => {
   const timeA = new Date(a.expectedArrival);
   const timeB = new Date(b.expectedArrival);
   if (timeA < timeB) {
@@ -29,25 +30,29 @@ const compareBusTimes = (a, b) => {
   }
   return 0;
 };
-const sortBusesByDate = ((array) => {
+export const sortByDate = ((array) => {
   return array.sort(compareBusTimes);
 });
-const formatBusTimes = ((array) => {
+export const limitToTimeFrame = (minutes) => ((array) => {
+  const endTime = new Date().getTime() + (minutes * 60000);
+  const limited = array.filter(item => new Date(item.expectedArrival) < endTime);
+  return limited;
+});
+export const formatTimes = ((array) => {
   const formatted = array.map(item => {
     const arrivalTime = item.expectedArrival.substring(11, 16);
- 
     return {...item, expectedArrival: arrivalTime};
   });
   return formatted;
 });
-const formatBusMinutes = ((array) => {
+export const formatMinutes = ((array) => {
   const formatted = array.map(item => {
     const arrivalInMins = Math.round(item.timeToStation / 60);
     return {...item, timeToStation: arrivalInMins};
   });
   return formatted;
 });
-const filterAndGroupBuses = ((direction, array) => {
+export const filterAndGroup = ((direction, array) => {
   const filterByDirection = array.filter(item => item.direction === direction);
   const uniqueVehicleIds = [...new Set(filterByDirection.map(item => item.vehicleId))];
   const groupedByVehicleId = uniqueVehicleIds.reduce((groupedVehicles, vehicleId) => {
@@ -82,11 +87,15 @@ const handlers = {
     });
   },
   [FETCH_BUSES_SUCCESS]: (state, action) => {
-    const busesSortedByDate = sortBusesByDate(action.payload);
-    const formattedBusesTime= formatBusTimes(busesSortedByDate);
-    const formattedBusesMinutes = formatBusMinutes(formattedBusesTime);
-    const inboundBuses = filterAndGroupBuses("inbound",formattedBusesMinutes);
-    const outboundBuses = filterAndGroupBuses("outbound", formattedBusesMinutes);
+    const buses = pipe(
+      sortByDate,
+      limitToTimeFrame(15),
+      formatTimes,
+      formatMinutes
+    )(action.payload);
+    const inboundBuses = filterAndGroup("inbound", buses);
+    const outboundBuses = filterAndGroup("outbound", buses); 
+
     return  {
      ...state, 
      buses: {

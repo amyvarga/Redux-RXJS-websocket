@@ -1,4 +1,4 @@
-const getData = require('../server/https-native');
+const getData = require('../server/fetch');
 const http = require('http');
 const webSocketServerPort = 8000;
 const webSocketServer = require('websocket').server;
@@ -11,7 +11,6 @@ const clients = {};
 const users = {};
 let intervals = {};
 let userActivity = [];
-const fetch = require("node-fetch");
 
 const getUniqueId = () => {
   const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
@@ -30,17 +29,33 @@ const sendMessage = (json) => {
 };
 
 wsServer.on('request', function(request){
+  console.log(request);
   const userId = getUniqueId();
   console.log((new Date()) + " Received a new connection from origin " + request.origin + ".");
   const connection = request.accept(null, request.origin);
   clients[userId] = connection;
   console.log("Connected: " + userId + " in " + Object.getOwnPropertyNames(clients));
   
-  intervals.userId = setTimeout(async () => {
-    const data = await getData('https://api.tfl.gov.uk/line/295/arrivals');
-    connection.send(JSON.stringify(data));
-  }, 120);
-
+  const getBuses = async (busId) => {
+    console.log('busId', busId);
+    try {
+      const data = await getData(`https://api.tfl.gov.uk/line/${busId}/arrivals`);
+      const message = {
+        type: busId,
+         data
+      };
+      connection.send(JSON.stringify(message));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  connection.on('message', function(message) {
+    const busId = JSON.parse(message.utf8Data).busId;
+    intervals.userId = setInterval(getBuses, 60000, busId);
+    getBuses(busId);
+  });
+  
   connection.on('close', function(connection) {
     console.log("CLOSED: " + (new Date()) + " Peer " + userId + " disconnected.");
     const json = { type: typesDef.USER_EVENT };

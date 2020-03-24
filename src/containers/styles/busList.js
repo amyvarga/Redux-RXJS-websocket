@@ -5,23 +5,22 @@ export const SECTION = styled.div `
     color: #4C9900;
     margin-bottom: 0;
     flex:0 0 100%;
-    margin-left: 0.5em;
   }
   .tableGroup {
     display: flex;
     flex-flow: wrap;
   }
   .tableContainer {
-    width: 50%;
+    width: 33%;
     margin-bottom: 1em;
   }
 `;
 export const TABLE = styled.table`
   font-family: "Trebuchet MS", Helvetica, sans-serif;
-  font-size: 1em;
+  font-size: 0.75em;
   color: #606060;
   text-align: left;
-  margin: 0 0.5em 0 0.5em; 
+  width: 95%; 
   border: 1px solid #4C9900;
   tr {
     height: 1em;
