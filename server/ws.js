@@ -37,7 +37,6 @@ wsServer.on('request', function(request){
   console.log("Connected: " + userId + " in " + Object.getOwnPropertyNames(clients));
   
   const getBuses = async (busId) => {
-    console.log('busId', busId);
     try {
       const data = await getData(`https://api.tfl.gov.uk/line/${busId}/arrivals`);
       const message = {

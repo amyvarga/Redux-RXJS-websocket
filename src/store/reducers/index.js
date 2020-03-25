@@ -87,6 +87,7 @@ const handlers = {
     });
   },
   [FETCH_BUSES_SUCCESS]: (state, action) => {
+    console.log(action);
     const buses = pipe(
       sortByDate,
       limitToTimeFrame(15),
@@ -113,6 +114,6 @@ const handlers = {
   }
 };
 
-const rootReducer = (state=initialState, action) => handlers[action.type] ? handlers[action.type](state, action) : {...state};
+export const rootReducer = (state=initialState, action) => handlers[action.type] ? handlers[action.type](state, action) : {...state};
 
 export default rootReducer;
