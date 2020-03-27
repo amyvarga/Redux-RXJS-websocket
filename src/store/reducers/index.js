@@ -33,11 +33,12 @@ export const compareBusTimes = (a, b) => {
 export const sortByDate = ((array) => {
   return array.sort(compareBusTimes);
 });
-export const limitToTimeFrame = (minutes) => ((array) => {
-  const endTime = new Date().getTime() + (minutes * 60000);
+export const limitToTimeFrame = (startTime, minutes) => ((array) => {
+  const endTime = new Date(startTime).getTime() + (minutes * 60000);
   const limited = array.filter(item => new Date(item.expectedArrival) < endTime);
   return limited;
 });
+
 export const formatTimes = ((array) => {
   const formatted = array.map(item => {
     const arrivalTime = item.expectedArrival.substring(11, 16);
@@ -87,16 +88,15 @@ const handlers = {
     });
   },
   [FETCH_BUSES_SUCCESS]: (state, action) => {
-    console.log(action);
+    const startTime = new Date();
     const buses = pipe(
       sortByDate,
-      limitToTimeFrame(15),
+      limitToTimeFrame(startTime, 15),
       formatTimes,
       formatMinutes
     )(action.payload);
     const inboundBuses = filterAndGroup("inbound", buses);
     const outboundBuses = filterAndGroup("outbound", buses); 
-
     return  {
      ...state, 
      buses: {

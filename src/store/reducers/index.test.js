@@ -6,22 +6,35 @@ import rootReducer, {
   formatMinutes,
   filterAndGroup
 } from "./index";
-import { FindValueSubscriber } from "rxjs/internal/operators/find";
 
-const item1 = {expectedArrival: "2020-03-24T16:35:36Z", timeToStation: 1739 };
-const item2 = {expectedArrival: "2020-03-24T16:30:36Z", timeToStation: 1033 };
-const item3 = { expectedArrival: "2020-03-24T16:29:36Z", timeToStation: 1559 };
-const item4 = { expectedArrival: "2020-03-24T16:28:36Z", timeToStation: 175 };
-const item5 = { direction: "inbound", vehicleId: "XXAA" };
-const item6 = { direction: "inbound", vehicleId: "XXAA" };
-const item7 = { direction: "inbound", vehicleId: "XXBB" };
-const item8 = { direction: "inbound", vehicleId: "XXBB" };
-const item9 = { direction: "outbound", vehicleId: "XXAA" };
-const item10 = { direction: "outbound", vehicleId: "XXAA" };
-const item11 = { direction: "outbound", vehicleId: "XXBB" };
-const item12 = { direction: "outbound", vehicleId: "XXBB" };
+const bus1 = {expectedArrival: "2020-03-24T16:35:36Z", timeToStation: 1739, direction: "inbound", vehicleId: "XXAA"};
+const bus2 = {expectedArrival: "2020-03-24T16:30:36Z", timeToStation: 1033, direction: "inbound", vehicleId: "XXAA"};
+const bus3 = { expectedArrival: "2020-03-24T16:29:36Z", timeToStation: 1559, direction: "inbound", vehicleId: "XXBB" };
+const bus4 = { expectedArrival: "2020-03-24T16:28:36Z", timeToStation: 175, direction: "inbound", vehicleId: "XXBB" };
+const bus5 = { expectedArrival: "2020-03-24T16:35:36Z", timeToStation: 1739, direction: "outbound", vehicleId: "XXAA" };
+const bus6 = { expectedArrival: "2020-03-24T16:25:36Z", timeToStation: 173, direction: "outbound", vehicleId: "XXAA" };
+const bus7 = { expectedArrival: "2020-03-24T16:29:36Z", timeToStation: 1073, direction: "outbound", vehicleId: "XXBB" };
+const bus8 = { expectedArrival: "2020-03-24T16:34:36Z", timeToStation: 573, direction: "outbound", vehicleId: "XXBB" };
 
-const getState = ({
+const expectedFormat1 = ({expectedArrival = "16:35", timeToStation = 29, direction = "inbound", vehicleId = "XXAA" } = {}) => ({expectedArrival, timeToStation, direction, vehicleId});
+const expectedFormat2 = ({expectedArrival = "16:30", timeToStation = 17, direction = "inbound", vehicleId = "XXAA"} = {}) => ({expectedArrival, timeToStation, direction, vehicleId});
+const expectedFormat3 = ({expectedArrival = "16:29" , timeToStation = 26, direction = "inbound", vehicleId = "XXBB" } = {}) => ({expectedArrival, timeToStation, direction, vehicleId});
+const expectedFormat4 = ({ expectedArrival= "16:28", timeToStation = 3, direction = "inbound", vehicleId = "XXBB" } = {}) => ({expectedArrival, timeToStation, direction, vehicleId});
+const expectedFormat5 =({ expectedArrival = "16:35", timeToStation = 29, direction = "outbound", vehicleId = "XXAA" } = {}) => ({expectedArrival, timeToStation, direction, vehicleId});
+const expectedFormat6 = ({expectedArrival = "16:25", timeToStation = 3, direction = "outbound", vehicleId = "XXAA" } = {}) => ({expectedArrival, timeToStation, direction, vehicleId});
+const expectedFormat7 = ({expectedArrival = "16:29", timeToStation = 18, direction = "outbound", vehicleId = "XXBB" } = {}) => ({expectedArrival, timeToStation, direction, vehicleId});
+const expectedFormat8 = ({expectedArrival = "16:34", timeToStation = 10, direction = "outbound", vehicleId = "XXBB" } = {}) => ({expectedArrival, timeToStation, direction, vehicleId});
+
+const expectedFormatInboundBuses = {
+  XXAA: [expectedFormat2(), expectedFormat1()],
+  XXBB: [expectedFormat4(), expectedFormat3()]
+};
+const expectedFormatOutboundBuses = {
+  XXAA: [expectedFormat6(), expectedFormat5()],
+  XXBB: [expectedFormat7(), expectedFormat8()]
+};
+
+const getInitialState = ({
   loadingUsers = false,
   errorMessage = null,
   users = [],
@@ -74,115 +87,30 @@ const getAction = (actionType, payload) => ({
   payload: payload
 });
 
-const bus1 = {
-  expectedArrival: "2020-03-25T16:59:29Z",
-  vehicleId: "LK65EBJ",
-  direction: "outbound",
-  timeToStation: 717
-};
-
-const formattedBus1 = {
-  expectedArrival: "16:59",
-  vehicleId: "LK65EBJ",
-  direction: "outbound",
-  timeToStation: 12
-};
-
-const bus2 = {
-  expectedArrival: "2020-03-25T16:59:31Z",
-  vehicleId: "LK65EAX",
-  direction: "inbound",
-  timeToStation: 719 
-};
-
-const formattedBus2 = {
-  expectedArrival: "16:59",
-  vehicleId: "LK65EAX",
-  direction: "inbound",
-  timeToStation: 12 
-};
-
-const bus3 = {
-  expectedArrival: "2020-03-25T17:02:18Z",
-  vehicleId: "LK65EAX",
-  direction: "inbound",
-  timeToStation: 886
-};
-
-const formattedBus3 = {
-  expectedArrival: "17:02",
-  vehicleId: "LK65EAX",
-  direction: "inbound",
-  timeToStation: 15
-};
-
-const bus4 = {
-  expectedArrival: "2020-03-25T17:03:16Z",
-  vehicleId: "LK65EBJ",
-  direction: "outbound",
-  timeToStation: 944
-};
-
-const formattedBus4 = {
-  expectedArrival: "17:03",
-  vehicleId: "LK65EBJ",
-  direction: "outbound",
-  timeToStation: 16
-};
-
-const bus5 = {
-  expectedArrival: "2020-03-25T16:59:37Z",
-  vehicleId: "LK65EBM",
-  direction: "inbound",
-  timeToStation: 725
-};
-
-const formattedBus5 = {
-  expectedArrival: "16:59",
-  vehicleId: "LK65EBM",
-  direction: "inbound",
-  timeToStation: 12
-};
-
-const bus6 = {
-  expectedArrival: "2020-03-25T17:00:29Z",
-  vehicleId: "LK65EBM",
-  direction: "inbound",
-  timeToStation: 777
-};
-
-const formattedBus6 = {
-  expectedArrival: "17:00",
-  vehicleId: "LK65EBM",
-  direction: "inbound",
-  timeToStation: 13
-};
-
 describe('compareBusTimes', () => {
   it('will return 1 when timeA is later than timeB', () => {
-    const timeB = {
-      expectedArrival: "2020-03-24T16:30:36Z"
-    };
     const timeA = {
       expectedArrival: "2020-03-24T16:45:36Z"
+    };
+    const timeB = {
+      expectedArrival: "2020-03-24T16:30:36Z"
     };
     expect(compareBusTimes(timeA, timeB)).toEqual(1);
   });
   it('will return -1 when timeA is earlier than timeB', () => {
-    const timeB = {
-      expectedArrival: "2020-03-24T16:30:36Z"
-    };
     const timeA = {
       expectedArrival: "2020-03-24T16:15:36Z"
     };
-    expect(compareBusTimes(timeA, timeB)).toEqual(-1);
-
-  });
-  it('will return 0 when timeA is equal to timeB', () => {
     const timeB = {
       expectedArrival: "2020-03-24T16:30:36Z"
     };
+    expect(compareBusTimes(timeA, timeB)).toEqual(-1);
+  });
+  it('will return 0 when timeA is equal to timeB', () => {
     const timeA = {
+      expectedArrival: "2020-03-24T16:30:36Z"
+    };
+    const timeB = {
       expectedArrival: "2020-03-24T16:30:36Z"
     };
     expect(compareBusTimes(timeA, timeB)).toEqual(0);
@@ -191,181 +119,133 @@ describe('compareBusTimes', () => {
 
 describe('sortByDate', () => {
   it('will order an array of dates', () => {
-    const times = [item1, item2, item3, item4];
-    expect(sortByDate(times)).toEqual([item4, item3, item2, item1]);
+    const times = [bus1, bus2, bus3, bus4];
+    expect(sortByDate(times)).toEqual([bus4, bus3, bus2, bus1]);
   });
 });
 
 describe('limitToTimeFrame', () => {
   it('should only include times that are within the stated time frame', () => {
-    const times = [item1, item2, item3, item4];
-    expect(limitToTimeFrame(15)(times)).toEqual([item1, item2, item3, item4]);
+    const times = [bus1, bus2, bus3, bus4];
+    const startTime = "2020-03-24T16:25:00Z";
+    expect(limitToTimeFrame(startTime, 5)(times)).toEqual([bus3, bus4]);
   });
 });
 
 describe('formatTimes', () => {
   it('should format the arrival time to the format HH:MM', () => {
-    const times = [item1, item2, item3, item4];
-    const format1 = {expectedArrival: "16:35", timeToStation: 1739 };
-    const format2 = {expectedArrival: "16:30", timeToStation: 1033 };
-    const format3 = { expectedArrival: "16:29" , timeToStation: 1559 };
-    const format4 = { expectedArrival: "16:28", timeToStation: 175 };
-    expect(formatTimes(times)).toEqual([format1, format2, format3, format4]);
+    const times = [bus1, bus2, bus3, bus4];
+    expect(formatTimes(times)).toEqual([
+      expectedFormat1({timeToStation: 1739}), 
+      expectedFormat2({timeToStation: 1033}), 
+      expectedFormat3({timeToStation: 1559}), 
+      expectedFormat4({timeToStation: 175})
+    ]); 
   });
 });
 
 describe('formatMinutes', () => {
   it('should format seconds to minutes rounding up', () => {
-    const times = [item1, item2, item3, item4]; 
-    const format1 = {expectedArrival: "2020-03-24T16:35:36Z", timeToStation: 29 };
-    const format2 = {expectedArrival: "2020-03-24T16:30:36Z", timeToStation: 17 };
-    const format3 = { expectedArrival: "2020-03-24T16:29:36Z", timeToStation: 26 };
-    const format4 = { expectedArrival: "2020-03-24T16:28:36Z", timeToStation: 3 }
-    expect(formatMinutes(times)).toEqual([format1, format2, format3, format4]);
+    const times = [bus1, bus2, bus3, bus4]; 
+    expect(formatMinutes(times)).toEqual([
+      expectedFormat1({expectedArrival:"2020-03-24T16:35:36Z"}), 
+      expectedFormat2({expectedArrival:"2020-03-24T16:30:36Z"}), 
+      expectedFormat3({expectedArrival:"2020-03-24T16:29:36Z"}), 
+      expectedFormat4({expectedArrival:"2020-03-24T16:28:36Z"})
+    ]);
   });
 });
 
 describe('filterAndGroup', () => {
   it('should filter by direction and group by vehicle license', () => {
-    const buses = [item5, item6, item7, item8, item9, item10, item11, item12];
-    const inboundBuses = {
-      XXBB: [
-        { direction: "inbound", vehicleId: "XXBB" },
-        { direction: "inbound", vehicleId: "XXBB" }
-      ],
-      XXAA: [
-        { direction: "inbound", vehicleId: "XXAA" },
-        { direction: "inbound", vehicleId: "XXAA" }
-      ]
-    }
-    const outboundBuses = {
-      XXBB: [
-        { direction: "outbound", vehicleId: "XXBB" },
-        { direction: "outbound", vehicleId: "XXBB" }
-      ],
-      XXAA: [
-        { direction: "outbound", vehicleId: "XXAA" },
-        { direction: "outbound", vehicleId: "XXAA" }
-      ]
-    };
-    expect(filterAndGroup("inbound", buses)).toEqual(inboundBuses);
-    expect(filterAndGroup("outbound", buses)).toEqual(outboundBuses);
+    const buses = [expectedFormat2(), expectedFormat1(), expectedFormat4(), expectedFormat3(), expectedFormat6(), expectedFormat5(), expectedFormat7(), expectedFormat8()];
+    expect(filterAndGroup("inbound", buses)).toEqual(expectedFormatInboundBuses);
+    expect(filterAndGroup("outbound", buses)).toEqual(expectedFormatOutboundBuses);
   });
 });
 
 describe('rootReducer', () => {
   describe('FETCH_USERS_START', () => {
     it('should set loadingUsers to true', () => {
-      const state = getState();
-      const expectedState = getState({loadingUsers:true});
+      const state = getInitialState();
       const action = getAction("FETCH_USERS_START");
-      expect(rootReducer(state, action)).toEqual(expectedState);
+      expect(rootReducer(state, action).loadingUsers).toBeTruthy();
     });
   });
   describe('FETCH_USERS_SUCCESS', () => {
     it('should add users to the users array', () => {
-      const state = getState();
-      const expectedState = getState({users: [user1, user2, user3]});
-      const action = getAction("FETCH_USERS_SUCCESS", [user1, user2, user3]); 
-      expect(rootReducer(state, action)).toEqual(expectedState); 
+      const state = getInitialState();
+      const expectedUsers = [user1, user2, user3];
+      const action = getAction("FETCH_USERS_SUCCESS", expectedUsers); 
+      expect(rootReducer(state, action)).toEqual(expect.objectContaining({users: expectedUsers})); 
     }); 
     it('should set loadingUsers to false', () => {
-      const state = getState({users: [user1, user2, user3]});
-      const expectedState = getState({users: [user1, user2, user3], loadingUsers: false});
-      const action = getAction("FETCH_USERS_SUCCESS", [user1, user2, user3]); 
-      expect(rootReducer(state, action)).toEqual(expectedState);
+      const expectedUsers = [user1, user2, user3];
+      const state = getInitialState({users: expectedUsers});
+      const action = getAction("FETCH_USERS_SUCCESS", expectedUsers); 
+      expect(rootReducer(state, action).loadingUsers).toBeFalsy();
     });
     it('should not remove users from the existing state', () => {
-      const state = getState({users:  [user1, user2, user3] });
-      const expectedState = getState({users: [user1, user2, user3, user4, user5], loadingUsers: false});
+      const state = getInitialState({users:  [user1, user2, user3] });
       const action = getAction("FETCH_USERS_SUCCESS", [user4, user5]);
-      expect(rootReducer(state, action)).toEqual(expectedState);
+      expect(rootReducer(state, action)).toEqual(expect.objectContaining({users: [user1, user2, user3, user4, user5]}));
     });
     it('should only contain unique users', () => {
-      const state = getState({users:  [user1, user2, user3] });
-      const expectedState = getState({users: [user1, user2, user3, user4, user5], loadingUsers: false});
-      const action = getAction("FETCH_USERS_SUCCESS",  [user1, user2, user3, user4, user5] );
-      expect(rootReducer(state, action)).toEqual(expectedState);
+      const initialState = getInitialState({users:  [user1, user2, user3] });
+      const expectedUsers = [user1, user2, user3, user4, user5];
+      const action = getAction("FETCH_USERS_SUCCESS", expectedUsers);
+      expect(rootReducer(initialState, action)).toEqual(expect.objectContaining({users: expectedUsers}));
     });
   });
   describe('FETCH_USERS_START', () => {
     it('should set loadingUsers to false', () => {
-      const state = getState();
-      const expectedState = getState({loadingUsers:true});
+      const state = getInitialState();
       const action = getAction("FETCH_USERS_START");
-      expect(rootReducer(state, action)).toEqual(expectedState);
+      expect(rootReducer(state, action).loadingUsers).toBeTruthy();
     });
   });
   describe('FETCH_USERS_FAILURE', () => {
     it('should set loadingUsers to false', () => {
-      const state = getState();
-      const expectedState = getState({loadingUsers: false, errorMessage: "Error message"});
+      const state = getInitialState();
       const action = getAction("FETCH_USERS_FAILURE", "Error message");
-      expect(rootReducer(state, action)).toEqual(expectedState);
+      expect(rootReducer(state, action).loadingUsers).toBeFalsy();
     });
     it('should set errorMessage to error message', () => {
-      const state = getState();
-      const expectedState = getState({loadingUsers: false,errorMessage: "Error message"});
+      const state = getInitialState();
       const action = getAction("FETCH_USERS_FAILURE", "Error message");
-      expect(rootReducer(state, action)).toEqual(expectedState);
+      expect(rootReducer(state, action).errorMessage).toBeTruthy();
     });
   });
   describe('FETCH_BUSES_START', () => {
-    it('should set loadingUsers to true', () => {
-      const state = getState();
-      const expectedState = getState({loadingBuses: true});
+    it('should set loadingBuses to true', () => {
+      const state = getInitialState();
       const action = getAction("FETCH_BUSES_START");
-      expect(rootReducer(state, action)).toEqual(expectedState);
+      expect(rootReducer(state, action).loadingBuses).toBeTruthy();
     });
   });
   describe('FETCH_BUSES_SUCCESS', () => {
-    it('should sort the buses by date', () => { 
-      const state = getState();
-      const expectedState = getState({
+    it('should sort the buses by date, limit the time frame, format the time to HH:MM, format the minutes and should group by vehicleId and direction', () => { 
+      const state = getInitialState();
+      const action = getAction("FETCH_BUSES_SUCCESS", [bus1, bus2, bus3, bus4, bus5, bus6, bus7, bus8]);
+      const expectedState = getInitialState({
         buses: {
-          inbound: {
-            "LK65EAX": [
-              formattedBus2  
-            ],
-            "LK65EBM": [
-              formattedBus5, formattedBus3
-            ]
-          }, 
-          outbound: {
-            "LK65EBJ": [
-              formattedBus1, formattedBus4, formattedBus6
-            ],
-          }
+          inbound: expectedFormatInboundBuses,
+          outbound: expectedFormatOutboundBuses
         }
       });
-      const action = getAction("FETCH_BUSES_SUCCESS", [bus1, bus2, bus3, bus4, bus5, bus6]);
       expect(rootReducer(state, action)).toEqual(expectedState); 
-    });
-    it('should limit the buses to a given time frame', () => { 
-    });
-    it('should format the time to HH:MM', () => { 
-    });
-    it('should format the minutes', () => { 
-    });
-    it('should add inbound buses to the buses array', () => { 
-    });
-    it('should add outbound buses to the buses array', () => { 
-    });
-    it('should group vehicle licenses together', () => { 
     });
   });
   describe('FETCH_BUSES_FAILURE', () => {
-    it('should set loadingUsers to false', () => {
-      const state = getState();
-      const expectedState = getState({loadingBuses: false, errorMessage: "Error message"});
+    it('should set loadingBuses to false', () => {
+      const state = getInitialState();
       const action = getAction("FETCH_BUSES_FAILURE", "Error message");
-      expect(rootReducer(state, action)).toEqual(expectedState);
+      expect(rootReducer(state, action).loadingBuses).toBeFalsy();
     });
     it('should set errorMessage to error message', () => {
-      const state = getState();
-      const expectedState = getState({loadingBuses: false,errorMessage: "Error message"});
+      const state = getInitialState();
       const action = getAction("FETCH_BUSES_FAILURE", "Error message");
-      expect(rootReducer(state, action)).toEqual(expectedState);
+      expect(rootReducer(state, action).errorMessage).toBeTruthy();
     });
   });
 });

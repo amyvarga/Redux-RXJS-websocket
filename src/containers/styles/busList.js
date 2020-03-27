@@ -1,14 +1,12 @@
 import styled from "styled-components";
 
-export const SECTION = styled.div `
-  h3 {
+export const SECTION = styled.section `
+  display: flex;
+  flex-flow: wrap;
+  h3, h2 {
     color: #4C9900;
     margin-bottom: 0;
     flex:0 0 100%;
-  }
-  .tableGroup {
-    display: flex;
-    flex-flow: wrap;
   }
   .tableContainer {
     width: 33%;

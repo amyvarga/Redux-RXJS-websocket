@@ -51,7 +51,7 @@ wsServer.on('request', function(request){
   
   connection.on('message', function(message) {
     const busId = JSON.parse(message.utf8Data).busId;
-    intervals.userId = setInterval(getBuses, 60000, busId);
+    intervals.userId = setInterval(getBuses, 120000, busId);
     getBuses(busId);
   });
   
